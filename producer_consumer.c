@@ -55,10 +55,19 @@ int fill = 0;
 int use = 0;
 
 // TODO Define your input parameters (buffSize, prod, cons, uuid) here
-// Then use module_param to pass them from insmod command line. (--Assignment 2)
+static int buffSize = 0; // Buffer size
+static int prod = 0;     // Number of producers (0 or 1)
+static int cons = 0;     // Number of consumers (non-negative)
+static uid_t uuid;       // UID of the user
 
+// Then use module_param to pass them from insmod command line. (--Assignment 2)
+module_param(buffSize, int, 0644); // Define buffSize as a module parameter
+module_param(prod, int, 0644);     // Define prod as a module parameter
+module_param(cons, int, 0644);     // Define cons as a module parameter
+module_param(uuid, uint, 0644);     // Define uuid as a module parameter
 
 // TODO Define your semaphores here (empty, full, mutex) -- Assignment 3
+
 
 int producer_thread_function(void *pv)
 {
