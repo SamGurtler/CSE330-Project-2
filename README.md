@@ -1,6 +1,7 @@
-# CSE330: Operating Systems 
 
-Please follow the below steps to test your Project-1 Process Management. (Due: **17th October 2023 11:59 PM**)
+# CSE330: Operating Systems 
+This implementation partially by Sam Gurtler
+Please follow the below steps to test your Project-2 Process Management. (Due: **14th March 2024 11:59 PM**)
 
 - Download the zip of this git repository.
 - Unzip the repository.
