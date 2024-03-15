@@ -80,6 +80,7 @@ int producer_thread_function(void *pv)
 		{
 			// TODO Implement your producer kernel thread here
 			// use kthread_should_stop() to check if the kernel thread should stop
+			
 			// use down() and up() for semaphores
 			// Hint: Please refer to sample code to see how to use process_info struct
 			// Hint: kthread_should_stop() should be checked after down() and before up()
