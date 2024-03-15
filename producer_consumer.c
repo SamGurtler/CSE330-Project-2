@@ -84,20 +84,22 @@ int producer_thread_function(void *pv)
 			// use down() and up() for semaphores
 			// Hint: Please refer to sample code to see how to use process_info struct
 			// Hint: kthread_should_stop() should be checked after down() and before up()
-			if(kthread_should_stop()) kthread_stop();
+			if(kthread_should_stop()) kthread_stop(ctx_producer_thread[0]);
 			up(&empty);
 			up(&mutex);
 			fill++;
 			int index = (fill + buffSize - 1) % buffSize;
 			buffer[index]->start_time=task->start_time;
-			buffer[index]->boot_time=task->boot_time;
+			buffer[index]->pid=task->pid;
+			
+			//buffer[index]->boot_time=task->boot_time;
 			down_interruptible(&mutex);
 			down_interruptible(&full);
 			
 			total_no_of_process_produced++;
 			PCINFO("[%s] Produce-Item#:%d at buffer index: %d for PID:%d \n", current->comm,
 				   total_no_of_process_produced, (fill + buffSize - 1) % buffSize, task->pid);
-			if(kthread_should_stop()) kthread_stop();
+			if(kthread_should_stop()) kthread_stop(ctx_producer_thread[0]);
 			
 		}
 	}
@@ -124,6 +126,7 @@ int consumer_thread_function(void *pv)
 		up(&full);
 		up(&mutex);
 		unsigned long long start_time_ns = buffer[full->count+1]->start_time;
+		unsigned long long process_pid = buffer[full->count+1]->pid;
 		down_interruptible(&mutex);
 		down_interruptible(&empty);
 		
