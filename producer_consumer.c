@@ -89,8 +89,8 @@ int producer_thread_function(void *pv)
 			up(&mutex);
 			fill++;
 			int index = (fill + buffSize - 1) % buffSize;
-			buffer[index]->start_time=task->start_time;
-			buffer[index]->pid=task->pid;
+			buffer[index].start_time=task->start_time;
+			buffer[index].pid=task->pid;
 			
 			//buffer[index]->boot_time=task->boot_time;
 			down_interruptible(&mutex);
