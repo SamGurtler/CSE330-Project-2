@@ -55,10 +55,19 @@ int fill = 0;
 int use = 0;
 
 // TODO Define your input parameters (buffSize, prod, cons, uuid) here
-// Then use module_param to pass them from insmod command line. (--Assignment 2)
+static int buffSize = 0; // Buffer size
+static int prod = 0;     // Number of producers (0 or 1)
+static int cons = 0;     // Number of consumers (non-negative)
+static uid_t uuid;       // UID of the user
 
+// Then use module_param to pass them from insmod command line. (--Assignment 2)
+module_param(buffSize, int, 0644); // Define buffSize as a module parameter
+module_param(prod, int, 0644);     // Define prod as a module parameter
+module_param(cons, int, 0644);     // Define cons as a module parameter
+module_param(uuid, uint, 0644);     // Define uuid as a module parameter
 
 // TODO Define your semaphores here (empty, full, mutex) -- Assignment 3
+struct semaphore empty, full, mutex;
 
 int producer_thread_function(void *pv)
 {
@@ -71,6 +80,7 @@ int producer_thread_function(void *pv)
 		{
 			// TODO Implement your producer kernel thread here
 			// use kthread_should_stop() to check if the kernel thread should stop
+			
 			// use down() and up() for semaphores
 			// Hint: Please refer to sample code to see how to use process_info struct
 			// Hint: kthread_should_stop() should be checked after down() and before up()
@@ -148,13 +158,15 @@ void name_threads(void)
 
 static int __init thread_init_module(void)
 {
-	PCINFO("CSE330 Project-1 Kernel Module Inserted\n");
+	PCINFO("CSE330 Project-2 Kernel Module Inserted\n");
 	PCINFO("Kernel module received the following inputs: UID:%d, Buffer-Size:%d, No of Producer:%d, No of Consumer:%d", uuid, buffSize, prod, cons);
 
 	if (buffSize > 0 && (prod >= 0 && prod < 2))
 	{
 		// TODO initialize the semaphores here
-
+		sema_init(&mutex, prod); // Binary semaphore
+   		sema_init(&full, 0);  // Initially, buffer is empty
+    		sema_init(&empty, buffSize); // Initially, buffer has maximum capacity
 		name_threads();
 
 		for (int index = 0; index < buffSize; index++)
@@ -232,13 +244,13 @@ static void __exit thread_exit_module(void)
 		PCINFO("The total elapsed time of all processes for UID %d is \t%llu:%llu:%llu  \n", uuid, total_time_hr, total_time_min, total_time_sec);
 	}
 
-	PCINFO("CSE330 Project 1 Kernel Module Removed\n");
+	PCINFO("CSE330 Project 2 Kernel Module Removed\n");
 }
 
 module_init(thread_init_module);
 module_exit(thread_exit_module);
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Your Name Here");
-MODULE_DESCRIPTION("CSE330 2023 Fall Project 1 Process Management\n");
+MODULE_AUTHOR("Sam Gurtler");
+MODULE_DESCRIPTION("CSE330 2024 Spring Project 2 Process Management\n");
 MODULE_VERSION("0.1");
