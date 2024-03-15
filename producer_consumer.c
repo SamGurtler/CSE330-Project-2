@@ -84,7 +84,7 @@ int producer_thread_function(void *pv)
 			// use down() and up() for semaphores
 			// Hint: Please refer to sample code to see how to use process_info struct
 			// Hint: kthread_should_stop() should be checked after down() and before up()
-			if(kthread_should_stop()) break;
+			if(kthread_should_stop()) kthread_stop();
 			up(&empty);
 			up(&mutex);
 			fill++;
@@ -97,7 +97,7 @@ int producer_thread_function(void *pv)
 			total_no_of_process_produced++;
 			PCINFO("[%s] Produce-Item#:%d at buffer index: %d for PID:%d \n", current->comm,
 				   total_no_of_process_produced, (fill + buffSize - 1) % buffSize, task->pid);
-			if(kthread_should_stop()) break;
+			if(kthread_should_stop()) kthread_stop();
 			
 		}
 	}
