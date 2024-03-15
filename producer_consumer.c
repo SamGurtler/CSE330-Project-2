@@ -196,12 +196,12 @@ static int __init thread_init_module(void)
 		// TODO use kthread_run to create producer kernel threads here
 		// Hint: Please refer to sample code to see how to use kthread_run, kthread_should_stop, kthread_stop, etc.
 		// Hint: use ctx_producer_thread[index] to store the return value of kthread_run
-		if(prod>0) ctx_producer_thread[index]=kthread_run(producer_thread_function,NULL,producers[index]);
+		if(prod>0) ctx_producer_thread[0]=kthread_run(producer_thread_function,NULL,producers[index]);
 
 		// TODO use kthread_run to create consumer kernel threads here
 		// Hint: Please refer to sample code to see how to use kthread_run, kthread_should_stop, kthread_stop, etc.
 		// Hint: use ctx_consumer_thread[index] to store the return value of kthread_run
-		for(int index = 0; index < con; index++){
+		for(int index = 0; index < cons; index++){
 			ctx_consumer_thread[index]=kthread_run(consumer_thread_function,NULL,consumers[index]);
 		}
 	}
