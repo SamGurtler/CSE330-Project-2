@@ -93,8 +93,8 @@ int producer_thread_function(void *pv)
 			buffer[index].pid=task->pid;
 			
 			//buffer[index]->boot_time=task->boot_time;
-			down_interruptible(&mutex);
-			down_interruptible(&full);
+			if(down_interruptible(&mutex))return -EINTR;
+			if(down_interruptible(&full))return -EINTR;
 			
 			total_no_of_process_produced++;
 			PCINFO("[%s] Produce-Item#:%d at buffer index: %d for PID:%d \n", current->comm,
@@ -127,8 +127,8 @@ int consumer_thread_function(void *pv)
 		up(&mutex);
 		unsigned long long start_time_ns = buffer[full.count+1].start_time;
 		unsigned long long process_pid = buffer[full.count+1].pid;
-		down_interruptible(&mutex);
-		down_interruptible(&empty);
+		if(down_interruptible(&mutex))return -EINTR;
+		if(down_interruptible(&empty))return -EINTR;
 		
 		unsigned long long ktime = ktime_get_ns();
 		unsigned long long process_time_elapsed = (ktime - start_time_ns) / 1000000000;
