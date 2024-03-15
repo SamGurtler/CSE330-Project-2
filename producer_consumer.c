@@ -67,7 +67,7 @@ module_param(cons, int, 0644);     // Define cons as a module parameter
 module_param(uuid, uint, 0644);     // Define uuid as a module parameter
 
 // TODO Define your semaphores here (empty, full, mutex) -- Assignment 3
-
+struct semaphore empty, full, mutex;
 
 int producer_thread_function(void *pv)
 {
@@ -163,7 +163,9 @@ static int __init thread_init_module(void)
 	if (buffSize > 0 && (prod >= 0 && prod < 2))
 	{
 		// TODO initialize the semaphores here
-
+		sema_init(&mutex, prod); // Binary semaphore
+   		sema_init(&full, 0);  // Initially, buffer is empty
+    		sema_init(&empty, buffSize); // Initially, buffer has maximum capacity
 		name_threads();
 
 		for (int index = 0; index < buffSize; index++)
