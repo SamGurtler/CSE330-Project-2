@@ -125,8 +125,8 @@ int consumer_thread_function(void *pv)
 		if(end_flag) break;
 		up(&full);
 		up(&mutex);
-		unsigned long long start_time_ns = buffer[full.count+1]->start_time;
-		unsigned long long process_pid = buffer[full.count+1]->pid;
+		unsigned long long start_time_ns = buffer[full.count+1].start_time;
+		unsigned long long process_pid = buffer[full.count+1].pid;
 		down_interruptible(&mutex);
 		down_interruptible(&empty);
 		
