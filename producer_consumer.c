@@ -84,10 +84,21 @@ int producer_thread_function(void *pv)
 			// use down() and up() for semaphores
 			// Hint: Please refer to sample code to see how to use process_info struct
 			// Hint: kthread_should_stop() should be checked after down() and before up()
-
+			if(kthread_should_stop()) break;
+			up(&empty);
+			up(&mutex);
+			fill++;
+			int index = (fill + buffSize - 1) % buffSize;
+			buffer[index]->start_time=task->start_time;
+			buffer[index]->boot_time=task->boot_time;
+			down_interruptible(&mutex);
+			down_interruptible(&full);
+			
 			total_no_of_process_produced++;
 			PCINFO("[%s] Produce-Item#:%d at buffer index: %d for PID:%d \n", current->comm,
 				   total_no_of_process_produced, (fill + buffSize - 1) % buffSize, task->pid);
+			if(kthread_should_stop()) break;
+			
 		}
 	}
 
@@ -109,7 +120,13 @@ int consumer_thread_function(void *pv)
 		// use down() and up() for semaphores
 		// Hint: Please refer to sample code to see how to use process_info struct
 		// Hint: end_flag should be checked after down() and before up()
-
+		if(end_flag) break;
+		up(&full);
+		up(&mutex);
+		unsigned long long start_time_ns = buffer[full->count+1]->start_time;
+		down_interruptible(&mutex);
+		down_interruptible(&empty);
+		
 		unsigned long long ktime = ktime_get_ns();
 		unsigned long long process_time_elapsed = (ktime - start_time_ns) / 1000000000;
 		total_time_elapsed += ktime - start_time_ns;
@@ -122,6 +139,7 @@ int consumer_thread_function(void *pv)
 		total_no_of_process_consumed++;
 		PCINFO("[%s] Consumed Item#-%d on buffer index:%d::PID:%lu \t Elapsed Time %llu:%llu:%llu \n", current->comm,
 			   no_of_process_consumed, (use + buffSize - 1) % buffSize, process_pid, process_time_hr, process_time_min, process_time_sec);
+		if(end_flag) break;
 	}
 
 	PCINFO("[%s] Consumer Thread stopped.\n", current->comm);
